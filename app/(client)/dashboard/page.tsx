@@ -1,15 +1,25 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
+import { connectDB } from '@/lib/db';
+import Store from '@/lib/models/Store';
+import Product from '@/lib/models/Product';
+import Order from '@/lib/models/Order';
 import Link from 'next/link';
-
-const stats = [
-  { label: 'Orders',   value: '0', icon: '📦', color: 'from-green-900  to-slate-900 border-green-700/40'  },
-  { label: 'Products', value: '0', icon: '🛍️', color: 'from-indigo-900 to-slate-900 border-indigo-700/40' },
-  { label: 'Store',    value: '—', icon: '🏪', color: 'from-rose-900   to-slate-900 border-rose-700/40'   },
-];
+import { ExternalLink } from 'lucide-react';
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
+  await connectDB();
+
+  const store = await Store.findOne({ ownerId: session?.user.id }).lean() as { _id: unknown; slug: string; name: string; isActive: boolean } | null;
+
+  const storeId = store?._id as string | undefined;
+  const [productCount, orderCount] = storeId
+    ? await Promise.all([
+        Product.countDocuments({ storeId: storeId }),
+        Order.countDocuments({ storeId: storeId }),
+      ])
+    : [0, 0];
 
   return (
     <div className="space-y-8">
@@ -18,49 +28,72 @@ export default async function DashboardPage() {
         <h1 className="text-2xl sm:text-3xl font-black text-white">
           Assalam o Alaikum, {session?.user.name?.split(' ')[0]} 👋
         </h1>
-        <p className="text-gray-500 mt-1 text-sm">OBM Pakistan Dashboard mein khush aamdeed</p>
+        <p className="text-gray-500 mt-1 text-sm">OBM Pakistan Dashboard</p>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {stats.map(s => (
-          <div key={s.label} className={`bg-gradient-to-br ${s.color} border rounded-2xl p-6`}>
-            <div className="text-3xl mb-2">{s.icon}</div>
-            <div className="text-3xl font-black text-white">{s.value}</div>
-            <div className="text-gray-400 text-sm mt-1">{s.label}</div>
+      {/* No store yet */}
+      {!store && (
+        <div className="bg-gradient-to-br from-green-900/30 to-slate-900 border border-green-500/20 rounded-2xl p-8 text-center">
+          <div className="text-4xl mb-4">🚀</div>
+          <h2 className="text-xl font-black text-white mb-2">Apna Store Banayein</h2>
+          <p className="text-gray-400 text-sm mb-6 max-w-sm mx-auto">
+            Sirf 3 steps mein apna online store ready ho jaayega!
+          </p>
+          <Link href="/store-builder"
+            className="inline-block bg-green-600 hover:bg-green-700 text-white font-black px-8 py-3 rounded-xl transition">
+            Store Banana Shuru Karein →
+          </Link>
+        </div>
+      )}
+
+      {/* Store exists */}
+      {store && (
+        <>
+          {/* Stats */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              { label: 'Products',   value: productCount, color: 'from-green-900  border-green-700/40',  href: '/dashboard/products'   },
+              { label: 'Orders',     value: orderCount,   color: 'from-indigo-900 border-indigo-700/40', href: '/dashboard/orders'     },
+              { label: 'Categories', value: '—',          color: 'from-rose-900   border-rose-700/40',   href: '/dashboard/categories' },
+            ].map(s => (
+              <Link key={s.label} href={s.href}
+                className={`bg-gradient-to-br ${s.color} to-slate-900 border rounded-2xl p-6 hover:opacity-90 transition`}>
+                <div className="text-3xl font-black text-white">{s.value}</div>
+                <div className="text-gray-400 text-sm mt-1">{s.label}</div>
+              </Link>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {/* Setup store CTA */}
-      <div className="bg-white/5 border border-green-500/20 rounded-2xl p-8 text-center">
-        <div className="text-4xl mb-4">🚀</div>
-        <h2 className="text-xl font-black text-white mb-2">Apna Store Banayein</h2>
-        <p className="text-gray-500 text-sm mb-6 max-w-sm mx-auto">
-          Products add karein, theme choose karein, aur apna WhatsApp number set karein.
-          Sirf 5 minute lagenge!
-        </p>
-        <Link
-          href="/store-builder"
-          className="inline-block bg-green-600 hover:bg-green-700 text-white font-black px-8 py-3 rounded-xl transition"
-        >
-          Store Banana Shuru Karein
-        </Link>
-      </div>
+          {/* Store link */}
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex items-center justify-between gap-4">
+            <div>
+              <p className="text-xs text-gray-500 font-semibold uppercase tracking-widest mb-1">Aapka Store Link</p>
+              <p className="text-white font-semibold text-sm">{store.name}</p>
+              <p className="text-green-400 text-xs mt-0.5">/store/{store.slug}</p>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <span className={`text-xs font-bold px-3 py-1 rounded-full ${store.isActive ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'}`}>
+                {store.isActive ? 'Live' : 'Paused'}
+              </span>
+              <Link href={`/store/${store.slug}`} target="_blank"
+                className="w-9 h-9 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition">
+                <ExternalLink className="w-4 h-4 text-gray-300" />
+              </Link>
+            </div>
+          </div>
+        </>
+      )}
 
       {/* Quick links */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'My Store',  href: '/dashboard/store',    icon: '🏪' },
-          { label: 'Products',  href: '/dashboard/products', icon: '📦' },
-          { label: 'Orders',    href: '/dashboard/orders',   icon: '🧾' },
-          { label: 'Settings',  href: '/dashboard/settings', icon: '⚙️' },
+          { label: 'Store Builder', href: store ? '/dashboard/store'    : '/store-builder', icon: '🏪' },
+          { label: 'Products',      href: '/dashboard/products',   icon: '📦' },
+          { label: 'Categories',    href: '/dashboard/categories',  icon: '🏷️' },
+          { label: 'Orders',        href: '/dashboard/orders',      icon: '🧾' },
         ].map(l => (
-          <Link
-            key={l.label}
-            href={l.href}
-            className="bg-white/5 border border-white/10 hover:border-green-500/30 hover:bg-white/8 rounded-xl p-4 flex flex-col items-center gap-2 transition"
-          >
+          <Link key={l.label} href={l.href}
+            className="bg-white/5 border border-white/10 hover:border-green-500/30 hover:bg-white/8 rounded-xl p-4 flex flex-col items-center gap-2 transition">
             <span className="text-2xl">{l.icon}</span>
             <span className="text-xs font-semibold text-gray-400">{l.label}</span>
           </Link>
