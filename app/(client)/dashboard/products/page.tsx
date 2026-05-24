@@ -74,8 +74,9 @@ export default function ProductsPage() {
   }
 
   async function handleSave() {
-    if (!form.title.trim()) { setError('Title zaroor likhein'); return; }
-    if (form.price < 0)     { setError('Price galat hai'); return; }
+    if (!form.title.trim())       { setError('Title zaroor likhein');           return; }
+    if (form.price < 0)           { setError('Price galat hai');                 return; }
+    if (form.images.length === 0) { setError('Kam az kam 1 image zaroor add karein'); return; }
     setSaving(true); setError('');
 
     const method = modal === 'add' ? 'POST' : 'PATCH';
@@ -222,25 +223,47 @@ export default function ProductsPage() {
                 </button>
               </div>
 
-              {/* Images */}
+              {/* Images — min 1, max 5 */}
               <div>
-                <label className="block text-xs font-semibold text-gray-400 mb-2">Images</label>
-                <div className="flex flex-wrap gap-2 mb-2">
-                  {form.images.map(url => (
-                    <div key={url} className="relative w-16 h-16 rounded-lg overflow-hidden border border-white/10">
-                      <Image src={url} alt="" fill className="object-cover" />
-                      <button onClick={() => removeImage(url)} className="absolute top-0.5 right-0.5 w-5 h-5 bg-black/70 rounded-full flex items-center justify-center">
-                        <X className="w-3 h-3 text-white" />
+                <div className="flex items-center justify-between mb-2">
+                  <label className="text-xs font-semibold text-gray-400">
+                    Images <span className="text-gray-600">({form.images.length}/5)</span>
+                  </label>
+                  {form.images.length === 0 && (
+                    <span className="text-xs text-red-400">Kam az kam 1 image zaroor add karein</span>
+                  )}
+                </div>
+                <div className="grid grid-cols-5 gap-2">
+                  {/* Existing images */}
+                  {form.images.map((url, idx) => (
+                    <div key={url} className="relative aspect-square rounded-xl overflow-hidden border border-white/20 group">
+                      <Image src={url} alt="" fill className="object-cover" sizes="80px" />
+                      {idx === 0 && (
+                        <span className="absolute bottom-0 left-0 right-0 text-center text-[9px] font-bold bg-black/70 text-green-400 py-0.5">
+                          Main
+                        </span>
+                      )}
+                      <button onClick={() => removeImage(url)}
+                        className="absolute top-0.5 right-0.5 w-5 h-5 bg-black/80 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition">
+                        <X className="w-2.5 h-2.5 text-white" />
                       </button>
                     </div>
                   ))}
-                  <button onClick={() => fileRef.current?.click()} disabled={uploading}
-                    className="w-16 h-16 rounded-lg border-2 border-dashed border-white/20 hover:border-green-500/50 flex flex-col items-center justify-center gap-1 transition disabled:opacity-50">
-                    <ImagePlus className="w-5 h-5 text-gray-500" />
-                    <span className="text-[10px] text-gray-600">{uploading ? '...' : 'Add'}</span>
-                  </button>
-                  <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
+                  {/* Empty slots up to 5 */}
+                  {form.images.length < 5 && (
+                    <button onClick={() => fileRef.current?.click()} disabled={uploading}
+                      className="aspect-square rounded-xl border-2 border-dashed border-white/20 hover:border-green-500/50 flex flex-col items-center justify-center gap-1 transition disabled:opacity-40 bg-white/5">
+                      <ImagePlus className="w-5 h-5 text-gray-500" />
+                      <span className="text-[9px] text-gray-600 font-semibold">{uploading ? '...' : 'Add'}</span>
+                    </button>
+                  )}
+                  {/* Remaining empty slots (visual only) */}
+                  {Array.from({ length: Math.max(0, 4 - form.images.length) }).map((_, i) => (
+                    <div key={i} className="aspect-square rounded-xl border border-dashed border-white/10 bg-white/[0.02]" />
+                  ))}
                 </div>
+                <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleUpload} />
+                <p className="text-xs text-gray-600 mt-2">Pehli image main display hogi • Max 5 images</p>
               </div>
             </div>
 

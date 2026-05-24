@@ -10,7 +10,7 @@ const updateSchema = z.object({
   title:       z.string().min(1).max(120).optional(),
   description: z.string().max(1000).optional(),
   price:       z.number().min(0).optional(),
-  images:      z.array(z.string()).optional(),
+  images:      z.array(z.string()).min(1).max(5).optional(),
   inStock:     z.boolean().optional(),
   categoryId:  z.string().nullable().optional(),
 });

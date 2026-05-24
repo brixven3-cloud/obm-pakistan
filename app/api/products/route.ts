@@ -10,7 +10,7 @@ const productSchema = z.object({
   title:       z.string().min(1).max(120),
   description: z.string().max(1000).optional(),
   price:       z.number().min(0),
-  images:      z.array(z.string()).default([]),
+  images:      z.array(z.string()).min(1, 'Kam az kam 1 image zaroor hai').max(5, 'Maximum 5 images allowed'),
   inStock:     z.boolean().default(true),
   categoryId:  z.string().optional().nullable(),
 });
