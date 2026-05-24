@@ -22,11 +22,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
       <header className="sticky top-0 z-40 border-b border-white/10 bg-black/90 backdrop-blur">
         <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Link href="/admin" className="flex items-center gap-1.5 select-none">
-              <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-green-500 to-green-700 text-white font-black text-base">O</span>
-              <span className="flex items-center gap-1">
-                <span className="flex items-center justify-center w-7 h-7 rounded-lg border-2 border-indigo-500/70 bg-gradient-to-br from-indigo-900 to-slate-900 text-indigo-200 font-black text-sm">B</span>
-                <span className="flex items-center justify-center w-7 h-7 rounded-lg border-2 border-rose-500/70 bg-gradient-to-br from-rose-900 to-slate-900 text-rose-200 font-black text-sm">M</span>
+            <Link href="/admin" className="flex items-center gap-2 select-none">
+              <span className="flex items-center justify-center h-8 px-2 rounded-xl bg-gradient-to-br from-green-500 to-green-700 text-white font-black text-sm tracking-widest">
+                OBM
               </span>
             </Link>
             <span className="text-xs font-bold text-red-400 bg-red-500/10 border border-red-500/20 px-2 py-0.5 rounded-full tracking-widest">

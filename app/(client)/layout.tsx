@@ -13,13 +13,11 @@ export default async function ClientLayout({ children }: { children: React.React
       {/* Top Navbar */}
       <header className="sticky top-0 z-40 border-b border-white/10 bg-black/90 backdrop-blur">
         <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link href="/dashboard" className="flex items-center gap-1.5 select-none">
-            <span className="flex items-center justify-center w-8 h-8 rounded-xl bg-gradient-to-br from-green-500 to-green-700 text-white font-black text-base">O</span>
-            <span className="flex items-center gap-1">
-              <span className="flex items-center justify-center w-7 h-7 rounded-lg border-2 border-indigo-500/70 bg-gradient-to-br from-indigo-900 to-slate-900 text-indigo-200 font-black text-sm">B</span>
-              <span className="flex items-center justify-center w-7 h-7 rounded-lg border-2 border-rose-500/70 bg-gradient-to-br from-rose-900 to-slate-900 text-rose-200 font-black text-sm">M</span>
-              <span className="text-green-400 font-extrabold text-sm ml-1">Pakistan</span>
+          <Link href="/dashboard" className="flex items-center gap-2 select-none">
+            <span className="flex items-center justify-center h-8 px-2 rounded-xl bg-gradient-to-br from-green-500 to-green-700 text-white font-black text-sm tracking-widest">
+              OBM
             </span>
+            <span className="text-green-400 font-extrabold text-sm">Pakistan</span>
           </Link>
 
           <div className="flex items-center gap-3">
