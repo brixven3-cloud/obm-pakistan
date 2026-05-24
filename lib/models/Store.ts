@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Model, Types } from 'mongoose';
 
 export type BusinessType = 'mobile' | 'property' | 'laptop' | 'cloth' | 'perfume' | 'other';
-export type ThemeKey = 'blue' | 'green' | 'darkGold' | 'pink' | 'teal' | 'coral';
+export type ThemeKey = 'green' | 'blue' | 'darkGold' | 'pink' | 'teal' | 'coral' | 'white' | 'black' | 'purple' | 'orange' | 'rose' | 'slate';
 
 export interface IStore extends Document {
   ownerId: Types.ObjectId;
@@ -36,7 +36,7 @@ const StoreSchema = new Schema<IStore>(
     whatsappNumber: { type: String, required: true, trim: true },
     theme: {
       type: String,
-      enum: ['blue', 'green', 'darkGold', 'pink', 'teal', 'coral'],
+      enum: ['green', 'blue', 'darkGold', 'pink', 'teal', 'coral', 'white', 'black', 'purple', 'orange', 'rose', 'slate'],
       default: 'blue',
     },
     sections: {

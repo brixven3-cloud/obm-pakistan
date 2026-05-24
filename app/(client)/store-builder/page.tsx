@@ -17,12 +17,18 @@ const BUSINESS_TYPES = [
 ];
 
 const THEMES = [
-  { value: 'green',    label: 'Green',     bg: '#16a34a', dark: '#14532d' },
-  { value: 'blue',     label: 'Blue',      bg: '#2563eb', dark: '#1e3a8a' },
-  { value: 'darkGold', label: 'Dark Gold', bg: '#b45309', dark: '#78350f' },
-  { value: 'pink',     label: 'Pink',      bg: '#db2777', dark: '#9d174d' },
-  { value: 'teal',     label: 'Teal',      bg: '#0d9488', dark: '#134e4a' },
-  { value: 'coral',    label: 'Coral',     bg: '#e11d48', dark: '#881337' },
+  { value: 'green',    label: 'Green',      bg: '#16a34a', dark: '#14532d' },
+  { value: 'blue',     label: 'Blue',       bg: '#2563eb', dark: '#1e3a8a' },
+  { value: 'darkGold', label: 'Dark Gold',  bg: '#b45309', dark: '#78350f' },
+  { value: 'pink',     label: 'Pink',       bg: '#db2777', dark: '#9d174d' },
+  { value: 'teal',     label: 'Teal',       bg: '#0d9488', dark: '#134e4a' },
+  { value: 'coral',    label: 'Coral',      bg: '#e11d48', dark: '#881337' },
+  { value: 'purple',   label: 'Purple',     bg: '#7c3aed', dark: '#4c1d95' },
+  { value: 'orange',   label: 'Orange',     bg: '#ea580c', dark: '#7c2d12' },
+  { value: 'rose',     label: 'Rose Gold',  bg: '#be185d', dark: '#831843' },
+  { value: 'slate',    label: 'Silver',     bg: '#475569', dark: '#1e293b' },
+  { value: 'white',    label: 'White',      bg: '#f8fafc', dark: '#cbd5e1' },
+  { value: 'black',    label: 'Black',      bg: '#18181b', dark: '#09090b' },
 ];
 
 const STEPS = ['Business', 'Store Info', 'Theme', 'Done'];
@@ -198,7 +204,7 @@ export default function StoreBuilderPage() {
           <div>
             <h2 className="text-2xl font-black text-white mb-1">Theme chunein</h2>
             <p className="text-gray-500 text-sm mb-6">Baad mein bhi change kar sakte hain</p>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
               {THEMES.map(t => {
                 const sel = form.theme === t.value;
                 return (
