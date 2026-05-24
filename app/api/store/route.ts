@@ -11,7 +11,7 @@ const storeSchema = z.object({
   businessType:    z.enum(['mobile','property','laptop','cloth','perfume','other']),
   tagline:         z.string().max(120).optional(),
   whatsappNumber:  z.string().regex(/^\+92\d{10}$/, 'Format: +92300xxxxxxx'),
-  theme:           z.enum(['blue','green','darkGold','pink','teal','coral']).default('green'),
+  theme:           z.enum(['green','blue','darkGold','pink','teal','coral','purple','orange','rose','slate','white','black']).default('green'),
   sections:        z.object({
     header: z.object({ logo: z.string().optional(), announcement: z.string().optional() }).optional(),
     hero:   z.object({ headline: z.string(), subheadline: z.string().optional(), imageUrl: z.string().optional() }).optional(),

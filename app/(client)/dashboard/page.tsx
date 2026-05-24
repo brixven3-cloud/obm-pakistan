@@ -6,6 +6,7 @@ import Product from '@/lib/models/Product';
 import Order from '@/lib/models/Order';
 import Link from 'next/link';
 import { ExternalLink } from 'lucide-react';
+import CopyLinkButton from '@/components/CopyLinkButton';
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -16,10 +17,12 @@ export default async function DashboardPage() {
   const storeId = store?._id as string | undefined;
   const [productCount, orderCount] = storeId
     ? await Promise.all([
-        Product.countDocuments({ storeId: storeId }),
-        Order.countDocuments({ storeId: storeId }),
+        Product.countDocuments({ storeId }),
+        Order.countDocuments({ storeId }),
       ])
     : [0, 0];
+
+  const storeUrl = store ? `/store/${store.slug}` : '';
 
   return (
     <div className="space-y-8">
@@ -64,21 +67,27 @@ export default async function DashboardPage() {
             ))}
           </div>
 
-          {/* Store link */}
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-5 flex items-center justify-between gap-4">
-            <div>
-              <p className="text-xs text-gray-500 font-semibold uppercase tracking-widest mb-1">Aapka Store Link</p>
-              <p className="text-white font-semibold text-sm">{store.name}</p>
-              <p className="text-green-400 text-xs mt-0.5">/store/{store.slug}</p>
-            </div>
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <span className={`text-xs font-bold px-3 py-1 rounded-full ${store.isActive ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'}`}>
-                {store.isActive ? 'Live' : 'Paused'}
-              </span>
-              <Link href={`/store/${store.slug}`} target="_blank"
-                className="w-9 h-9 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition">
-                <ExternalLink className="w-4 h-4 text-gray-300" />
-              </Link>
+          {/* Store link card */}
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-5">
+            <div className="flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-xs text-gray-500 font-semibold uppercase tracking-widest mb-1">Aapka Store Link</p>
+                <p className="text-white font-semibold text-sm truncate">{store.name}</p>
+                <p className="text-green-400 text-xs mt-0.5 truncate">/store/{store.slug}</p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className={`text-xs font-bold px-3 py-1 rounded-full ${store.isActive ? 'bg-green-600/20 text-green-400' : 'bg-red-600/20 text-red-400'}`}>
+                  {store.isActive ? 'Live' : 'Paused'}
+                </span>
+                {/* Copy link */}
+                <CopyLinkButton url={storeUrl} />
+                {/* Open in new tab */}
+                <Link href={`/store/${store.slug}`} target="_blank"
+                  className="w-9 h-9 bg-white/10 hover:bg-white/20 rounded-lg flex items-center justify-center transition"
+                  title="Store kholen">
+                  <ExternalLink className="w-4 h-4 text-gray-300" />
+                </Link>
+              </div>
             </div>
           </div>
         </>
@@ -87,15 +96,15 @@ export default async function DashboardPage() {
       {/* Quick links */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { label: 'Store Builder', href: store ? '/dashboard/store'    : '/store-builder', icon: '🏪' },
-          { label: 'Products',      href: '/dashboard/products',   icon: '📦' },
-          { label: 'Categories',    href: '/dashboard/categories',  icon: '🏷️' },
-          { label: 'Orders',        href: '/dashboard/orders',      icon: '🧾' },
+          { label: 'Store Settings', href: store ? '/dashboard/store'    : '/store-builder', icon: '🏪' },
+          { label: 'Products',       href: '/dashboard/products',   icon: '📦' },
+          { label: 'Categories',     href: '/dashboard/categories',  icon: '🏷️' },
+          { label: 'Orders',         href: '/dashboard/orders',      icon: '🧾' },
         ].map(l => (
           <Link key={l.label} href={l.href}
             className="bg-white/5 border border-white/10 hover:border-green-500/30 hover:bg-white/8 rounded-xl p-4 flex flex-col items-center gap-2 transition">
             <span className="text-2xl">{l.icon}</span>
-            <span className="text-xs font-semibold text-gray-400">{l.label}</span>
+            <span className="text-xs font-semibold text-gray-400 text-center">{l.label}</span>
           </Link>
         ))}
       </div>
